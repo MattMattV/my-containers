@@ -1,0 +1,75 @@
+cadvisor:
+    image: google/cadvisor:latest
+    container_name: "cadvisor"
+    ports:
+        - "8080:8080"
+    volumes:
+        - /:/rootfs:ro
+        - /var/run:/var/run:rw
+        - /sys:/sys:ro
+        - /var/lib/docker/:/var/lib/docker:ro
+
+dummy-1:
+    image: httpd
+    ports: 
+        - "8001:80"
+    container_name: dummy-1
+    volumes:
+        - ./html/dummy1.html:/usr/local/apache2/htdocs/index.html
+    mem_limit: 100M
+    memswap_limit: 100M
+    cpuset: "0"
+
+dummy-2:
+    image: httpd
+    ports: 
+        - "8002:80"
+    container_name: "dummy-2"
+    volumes:
+        - ./html/dummy2.html:/usr/local/apache2/htdocs/index.html
+    mem_limit: 100M
+    memswap_limit: 100M
+    cpuset: "1"
+
+dummy-3:
+    image: httpd
+    ports: 
+        - "8003:80"
+    container_name: "dummy-3"
+    volumes:
+        - ./html/dummy3.html:/usr/local/apache2/htdocs/index.html
+    mem_limit: 100M
+    memswap_limit: 100M
+    cpuset: "1"
+
+dummy-4:
+    image: httpd
+    ports: 
+        - "8004:80"
+    container_name: "dummy-4"
+    volumes:
+        - ./html/dummy4.html:/usr/local/apache2/htdocs/index.html
+    mem_limit: 100M
+    memswap_limit: 100M
+    cpuset: "1"
+
+
+middleware:
+    image: middleware
+    container_name: "middleware"
+    ports:
+        - "9090:9090"
+    links:
+        - dummy-1
+        - dummy-2
+        - dummy-3
+        - dummy-4
+
+load-balancer:
+    image: load-balancer
+    container_name: "load-balancer"
+    ports:
+        - "7000:7000"
+    links:
+        - cadvisor
+        - middleware
