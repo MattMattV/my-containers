@@ -53,23 +53,10 @@ dummy-4:
     memswap_limit: 100M
     cpuset: "1"
 
-
-middleware:
-    image: middleware
-    container_name: "middleware"
-    ports:
-        - "9090:9090"
-    links:
-        - dummy-1
-        - dummy-2
-        - dummy-3
-        - dummy-4
-
 load-balancer:
     image: load-balancer
     container_name: "load-balancer"
     ports:
-        - "7000:7000"
+        - "9999:9999"
     links:
         - cadvisor
-        - middleware
